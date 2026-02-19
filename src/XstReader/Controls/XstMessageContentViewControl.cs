@@ -1,4 +1,4 @@
-﻿// Project site: https://github.com/iluvadev/XstReader
+// Project site: https://github.com/iluvadev/XstReader
 //
 // Based on the great work of Dijji. 
 // Original project: https://github.com/dijji/XstReader
@@ -20,6 +20,8 @@ namespace XstReader.App.Controls
     {
         private XstRecipientListControl RecipientListControl { get; } = new XstRecipientListControl() { Name = "Recipients List" };
         private XstAttachmentListControl AttachmentListControl { get; } = new XstAttachmentListControl() { Name = "Attachments List" };
+        private TabPage MailCategoriesTabPage { get; } = new TabPage("Mail Categories");
+        private Krypton.Toolkit.KryptonTextBox MailCategoriesTextBox { get; } = new Krypton.Toolkit.KryptonTextBox();
 
 
         public XstMessageContentViewControl()
@@ -30,6 +32,13 @@ namespace XstReader.App.Controls
         private void Initialize()
         {
             if (DesignMode) return;
+
+            MailCategoriesTextBox.Dock = DockStyle.Fill;
+            MailCategoriesTextBox.Multiline = true;
+            MailCategoriesTextBox.ReadOnly = true;
+            MailCategoriesTextBox.ScrollBars = ScrollBars.Both;
+            MailCategoriesTabPage.Controls.Add(MailCategoriesTextBox);
+            MainTabControl.Controls.Add(MailCategoriesTabPage);
 
             RecipientListControl.SelectedItemChanged += (s, e) => RaiseSelectedItemChanged(e.Element);
             RecipientListControl.GotFocus += (s, e) => RaiseSelectedItemChanged();
@@ -96,6 +105,7 @@ namespace XstReader.App.Controls
             }
 
             TransportHeadersTextBox.Text = _DataSource?.Properties[ElementProperties.PropertyCanonicalName.PidTagTransportMessageHeaders]?.Value ?? string.Empty;
+            MailCategoriesTextBox.Text = string.Join(Environment.NewLine, _DataSource?.MailCategories ?? Array.Empty<string>());
         }
 
         public void Print()

@@ -1,4 +1,4 @@
-﻿// Project site: https://github.com/iluvadev/XstReader
+// Project site: https://github.com/iluvadev/XstReader
 //
 // Based on the great work of Dijji. 
 // Original project: https://github.com/dijji/XstReader
@@ -34,6 +34,13 @@ namespace XstReader.App.Controls
             ObjectListView.Columns.Add(new OLVColumn("From", nameof(XstMessage.From)) { Width = 150 });
             ObjectListView.Columns.Add(new OLVColumn("To", nameof(XstMessage.To)) { Width = 150 });
             ObjectListView.Columns.Add(new OLVColumn("Cc", nameof(XstMessage.Cc)) { Width = 150 });
+            ObjectListView.Columns.Add(new OLVColumn("Mail Categories", nameof(XstMessage.MailCategories))
+            {
+                Width = 170,
+                AspectGetter = rowObject => rowObject is XstMessage message
+                    ? string.Join(", ", message.MailCategories)
+                    : string.Empty
+            });
             //ObjectListView.Columns.Add(new OLVColumn("Bcc", nameof(XstMessage.Bcc)) { Width = 150 });
             ObjectListView.Columns.Add(new OLVColumn("Date", nameof(XstMessage.Date)) { Width = 150 });
 
