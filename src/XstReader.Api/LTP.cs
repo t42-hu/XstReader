@@ -1,4 +1,4 @@
-﻿// Project site: https://github.com/iluvadev/XstReader
+// Project site: https://github.com/iluvadev/XstReader
 //
 // Based on the great work of Dijji. 
 // Original project: https://github.com/dijji/XstReader
@@ -672,6 +672,41 @@ namespace XstReader
                     }
                     if (val == "" && col.wPropId == PropertyCanonicalName.PidTagSubject)
                         val = "<No subject>";
+                    break;
+
+                case PropertyType.PT_MV_TSTRING:
+                    if (col.cbData != 4)
+                        throw new XstException("Unexpected property length");
+                    hnid = Map.MapType<HNID>(db.Buffer, (int)rowOffset + col.ibData);
+
+                    if (!hnid.HasValue)
+                        val = Array.Empty<string>();
+                    else
+                    {
+                        var buf = GetBytesForHNID(blocks, subNodeTree, hnid);
+
+                        if (buf == null)
+                            val = "<Could not read MultipleString value>";
+                        else
+                        {
+                            var count = Map.MapType<UInt32>(buf);
+                            var offsets = Map.MapArray<UInt32>(buf, sizeof(UInt32), (int)count);
+                            var values = new string[count];
+
+                            for (int i = 0; i < count; i++)
+                            {
+                                int len;
+                                if (i < count - 1)
+                                    len = (int)(offsets[i + 1] - offsets[i]);
+                                else
+                                    len = buf.Length - (int)offsets[i];
+
+                                values[i] = Encoding.Unicode.GetString(buf, (int)offsets[i], len);
+                            }
+
+                            val = values;
+                        }
+                    }
                     break;
 
                 case PropertyType.PT_SYSTIME:

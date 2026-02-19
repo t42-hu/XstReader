@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
@@ -79,6 +79,14 @@ namespace XstReader
         [Category(@"Address Properties")]
         [Description(@"Contains the display name of the sending mailbox owner.")]
         public override string From => Message.From;
+
+        /// <summary>
+        /// Contains category labels assigned to the message.
+        /// </summary>
+        [DisplayName("Mail Categories")]
+        [Category(@"General Message Properties")]
+        [Description(@"Contains the category labels assigned to the message.")]
+        public override string[] MailCategories => Message.MailCategories;
 
         /// <summary>
         /// Indicates if the Message is sent in representation of other 

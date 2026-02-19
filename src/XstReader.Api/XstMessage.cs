@@ -1,4 +1,4 @@
-﻿// Project site: https://github.com/iluvadev/XstReader
+// Project site: https://github.com/iluvadev/XstReader
 //
 // Based on the great work of Dijji. 
 // Original project: https://github.com/dijji/XstReader
@@ -30,6 +30,8 @@ namespace XstReader
     public partial class XstMessage : XstElement
     {
         private static RtfDecompressor RtfDecompressor = new RtfDecompressor();
+        private const ushort MailCategoriesTag = 0x8012;
+        private const string UnsupportedPropertyPrefix = "Unsupported property type";
 
         #region Structure Class properties
         /// <summary>
@@ -114,6 +116,14 @@ namespace XstReader
         [Category(@"Address Properties")]
         [Description(@"Contains the display name of the sending mailbox owner.")]
         public virtual string From => Properties[PropertyCanonicalName.PidTagSenderName]?.ValueAsStringSanitized;
+
+        /// <summary>
+        /// Contains category labels assigned to the message.
+        /// </summary>
+        [DisplayName("Mail Categories")]
+        [Category(@"General Message Properties")]
+        [Description(@"Contains the category labels assigned to the message.")]
+        public virtual string[] MailCategories => GetMailCategories();
 
         /// <summary>
         /// Indicates if the Message is sent in representation of other 
@@ -772,6 +782,50 @@ namespace XstReader
             }
             return "";
         }
+
+        private string[] GetMailCategories()
+        {
+            var rawValue = Properties[MailCategoriesTag]?.Value;
+            var labels = NormalizeMailCategories(rawValue);
+            if (labels.Length > 0)
+                return labels;
+
+            if (!IsUnsupportedPropertyValue(rawValue))
+                return Array.Empty<string>();
+
+            Properties.ClearContents();
+            return NormalizeMailCategories(Properties[MailCategoriesTag]?.Value);
+        }
+
+        private static string[] NormalizeMailCategories(object rawValue)
+        {
+            if (rawValue is string[] labels)
+            {
+                return labels
+                    .Select(CleanMailCategory)
+                    .Where(item => !string.IsNullOrWhiteSpace(item))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+            }
+
+            if (rawValue is string label &&
+                !string.IsNullOrWhiteSpace(label) &&
+                !IsUnsupportedPropertyValue(label))
+            {
+                var cleanedLabel = CleanMailCategory(label);
+                if (!string.IsNullOrWhiteSpace(cleanedLabel))
+                    return new[] { cleanedLabel };
+            }
+
+            return Array.Empty<string>();
+        }
+
+        private static bool IsUnsupportedPropertyValue(object value) =>
+            value is string text &&
+            text.StartsWith(UnsupportedPropertyPrefix, StringComparison.OrdinalIgnoreCase);
+
+        private static string CleanMailCategory(string value) =>
+            value.Replace("\0", string.Empty).Trim();
 
         /// <summary>
         /// Gets the String representation of the object
