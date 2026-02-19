@@ -7,7 +7,9 @@ This repository includes 3 projects ([XstReader](#xstreader), [XstExporter](#xst
 XstReader (and subprojects) is based on Microsoft’s documentation of the Outlook file formats in [MS-PST], first published in 2010 as part of the anti-trust settlement with the DOJ and the EU: <https://msdn.microsoft.com/en-us/library/ff385210(v=office.12).aspx>
 
 ## Original code
-This repo is a fork and evolution of [Dijji/XstReader](https://github.com/Dijji/XstReader)... [Dijji](https://github.com/Dijji) died at the end of May 2021
+This repo is a fork of [iluvadev/XstReader](https://github.com/iluvadev/XstReader), created and maintained by [iluvadev](https://github.com/iluvadev). All credit for the evolved architecture, library design, and the majority of the features goes to him.
+
+[iluvadev/XstReader](https://github.com/iluvadev/XstReader) is itself a fork and evolution of [Dijji/XstReader](https://github.com/Dijji/XstReader)... [Dijji](https://github.com/Dijji) died at the end of May 2021
 
 All the code here is the product of his wisdom or is inspired by his work.
 
@@ -23,6 +25,7 @@ An application to view Microsoft Outlook's .ost and .pst files:
 * With no dependency on any Microsoft Office component
 * You can inspect all the properties of Folders, Messages (emails, contacts, tasks, appointmets...), Attachments and Recipients
 * You can open attached emails, images, and some docs inside the application
+* You can view **Mail Categories** assigned to each message, both in the message list and in a dedicated tab in the message view
 * You can export emails:
   * As a single html file, with all the attachments and all available information embedded in the file
   * As Outlook .msg file
